@@ -92,6 +92,9 @@ pub struct Config {
     pub markdown: markup::Markdown,
     /// All user params set in `[extra]` in the config
     pub extra: HashMap<String, Toml>,
+
+    /// The optional configuration for "robots.txt" name 
+    pub robots_txt: String,
 }
 
 #[derive(Serialize)]
@@ -109,6 +112,7 @@ pub struct SerializedConfig<'a> {
     build_search_index: bool,
     extra: &'a HashMap<String, Toml>,
     markdown: &'a markup::Markdown,
+    robots_txt: &'a str,
 }
 
 impl Config {
@@ -331,6 +335,7 @@ impl Config {
             build_search_index: options.build_search_index,
             extra: &self.extra,
             markdown: &self.markdown,
+            robots_txt: &self.robots_txt,
         }
     }
 }
@@ -392,6 +397,7 @@ impl Default for Config {
             search: search::Search::default(),
             markdown: markup::Markdown::default(),
             extra: HashMap::new(),
+            robots_txt: "robots.txt".to_string(),
         }
     }
 }

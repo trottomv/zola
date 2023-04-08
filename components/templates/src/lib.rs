@@ -50,6 +50,8 @@ pub fn load_tera(path: &Path, config: &Config) -> Result<Tera> {
     let mut tera =
         Tera::parse(&tpl_glob).context("Error parsing templates from the /templates directory")?;
 
+    let robots_txt = config.robots_txt.to_string();
+
     if let Some(ref theme) = config.theme {
         // Test that the templates folder exist for that theme
         let theme_path = path.join("themes").join(theme);
@@ -67,10 +69,10 @@ pub fn load_tera(path: &Path, config: &Config) -> Result<Tera> {
         rewrite_theme_paths(&mut tera_theme, theme);
 
         // TODO: add tests for theme-provided robots.txt (https://github.com/getzola/zola/pull/1722)
-        if theme_path.join("templates").join("robots.txt").exists() {
+        if theme_path.join("templates").join(robots_txt.to_string()).exists() {
             tera_theme.add_template_file(
-                theme_path.join("templates").join("robots.txt"),
-                Some("robots.txt"),
+                theme_path.join("templates").join(robots_txt.to_string()),
+                Some(&"robots.txt"),
             )?;
         }
         tera.extend(&tera_theme)?;
@@ -78,8 +80,8 @@ pub fn load_tera(path: &Path, config: &Config) -> Result<Tera> {
     tera.extend(&ZOLA_TERA)?;
     tera.build_inheritance_chains()?;
 
-    if path.join("templates").join("robots.txt").exists() {
-        tera.add_template_file(path.join("templates").join("robots.txt"), Some("robots.txt"))?;
+    if path.join("templates").join(robots_txt.to_string()).exists() {
+        tera.add_template_file(path.join("templates").join(robots_txt.to_string()), Some(&"robots.txt"))?;
     }
 
     Ok(tera)
